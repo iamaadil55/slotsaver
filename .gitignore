@@ -11,6 +11,9 @@ venv/
 # Jupyter
 .ipynb_checkpoints/
 
+# Nightly job output
+logs/
+
 # OS / editor noise
 .DS_Store
 Thumbs.db

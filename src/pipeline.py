@@ -38,11 +38,16 @@ def build_scoring_artifacts(csv_path: str = "data/KaggleV2-May-2016.csv") -> dic
     iso = fit_isotonic(model.predict_proba(X_cal)[:, 1], y_cal)
 
     scored = test.copy()
-    p = iso.predict(model.predict_proba(X_test)[:, 1])
+    raw = model.predict_proba(X_test)[:, 1]
+    p = iso.predict(raw)
     # Real-data finding (2026-07-06): isotonic's sparse extreme bins produced
     # p = 1.0 for a handful of patients. Never claim certainty about future
     # human behavior — a "100%" that shows up once destroys the clinic's trust.
     scored["p_noshow"] = np.clip(p, 0.01, 0.99)
+    # Real-data finding #2: isotonic's step function put 15 of 20 called patients
+    # in one flat tie (p=0.533). Keep the raw score to break ties — display the
+    # calibrated value, rank by the finer-grained one.
+    scored["raw_score"] = raw
     scored["tier"] = risk_tiers(scored["p_noshow"]).values
     return {"model": model, "iso": iso, "scored_test": scored,
             "X_test": X_test, "is_real": is_real}
@@ -62,7 +67,7 @@ def daily_call_list(art: dict, day, capacity: int = 20, cost_per_call: float = 5
     """
     s = art["scored_test"]
     all_rows = s[s["appointment_day"].dt.date == day].sort_values(
-        "p_noshow", ascending=False).copy()
+        ["p_noshow", "raw_score"], ascending=False).copy()
 
     # Real-data finding (2026-07-06): one child had 5 appointments on the same
     # day and occupied 5 of the top slots — 25% of call capacity burned on one
@@ -77,7 +82,9 @@ def daily_call_list(art: dict, day, capacity: int = 20, cost_per_call: float = 5
     call_idx = day_df.index[day_df["worth_calling"].to_numpy()][:capacity]
     day_df.loc[call_idx, "call_today"] = True
 
-    day_df["why"] = top_reasons_frame(art["model"], art["X_test"].loc[day_df.index])
+    # Guard: LightGBM's pred_contrib rejects empty input (e.g. a day with no appointments)
+    day_df["why"] = (top_reasons_frame(art["model"], art["X_test"].loc[day_df.index])
+                     if len(day_df) else pd.Series(dtype=str))
 
     called = day_df[day_df["call_today"]]
     summary = {

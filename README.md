@@ -13,19 +13,26 @@ slotsaver/
 ├── 01_noshow_mvp.ipynb      # Level 1: EDA → features → models → business metrics
 ├── 02_calibration.ipynb     # Level 2a: honest probabilities + cost-sensitive threshold
 ├── 03_call_list.ipynb       # Level 2b: the daily call list with per-patient reasons
+├── 04_fairness_drift.ipynb  # Level 3: fairness audit + drift monitoring
 ├── app.py                   # Level 2b: Streamlit dashboard (run locally)
+├── api.py                   # Level 3: FastAPI scoring service
+├── nightly_job.py           # Level 3: batch scoring + drift report (cron-able)
+├── Dockerfile               # Level 3: container for the API
 ├── src/
 │   ├── data.py              # Load, clean, and (for testing) synthesize appointment data
 │   ├── features.py          # Leakage-safe feature engineering + temporal split
 │   ├── evaluate.py          # PR-AUC, precision@k, metrics comparison table
 │   ├── calibrate.py         # 3-way temporal split, ECE, isotonic, EV threshold, tiers
 │   ├── explain.py           # TreeSHAP per-patient reasons in plain language
-│   └── pipeline.py          # One end-to-end build shared by notebooks + dashboard
+│   ├── pipeline.py          # One end-to-end build shared by every surface
+│   ├── fairness.py          # Per-group calibration gaps, benefit rates, audit flags
+│   └── monitor.py           # PSI drift detection + retrain trigger
 ├── smoke_test.py            # Level 1 pipeline check (synthetic data)
 ├── smoke_test_l2.py         # Level 2a calibration check
 ├── smoke_test_l2b.py        # Level 2b call-list + explanation check
+├── smoke_test_l3.py         # Level 3 ranking/fairness/drift/API check
 ├── data/                    # Put the Kaggle CSV here (not committed)
-└── requirements.txt
+└── requirements.txt         # (requirements-api.txt = slim set for the container)
 ```
 
 ## Setup
@@ -63,6 +70,21 @@ Runs on your own computer (not Colab). Without the Kaggle CSV it starts in
 clearly-flagged synthetic demo mode, so you can see the product before wiring
 real data. Sidebar controls: clinic day, staff call capacity, and the three
 economic assumptions — watch the call list and expected value react.
+
+## Run the API (Level 3)
+
+```bash
+pip install fastapi uvicorn
+uvicorn api:app --reload
+```
+
+Then open http://127.0.0.1:8000/docs for interactive Swagger docs. Endpoints:
+`GET /health`, `POST /score` (one appointment → calibrated risk + tier + reasons),
+`GET /call-list?day=YYYY-MM-DD&capacity=20`. With Docker instead:
+`docker build -t slotsaver . && docker run -p 8000:8000 slotsaver`.
+
+The nightly batch job (scores tomorrow, logs predictions, checks drift,
+fires a retrain trigger on PSI > 0.25): `python nightly_job.py`.
 
 ## What makes this project non-trivial (read before interviews)
 
@@ -102,10 +124,11 @@ published *prospective* study reported — honest numbers, not leaderboard numbe
 
 ## Roadmap
 
-Levels 1 and 2 are complete (model → calibration → explanations → dashboard).
-Next: **Level 3** — FastAPI + Docker deployment, nightly batch scoring, drift
-monitoring, fairness audit across age/gender/scholarship groups, and tie-aware
-ranking within isotonic steps. See the project deep-dive doc.
+Levels 1–3 are complete: model → calibration → explanations → dashboard →
+API + Docker, nightly scoring, PSI drift monitoring, fairness audit, tie-aware
+ranking. **Level 4** is a production design exercise (FHIR/EHR integration,
+A/B test plan for true intervention effect, HIPAA architecture, MLflow + CI) —
+documented on paper rather than built, since it requires a real clinic.
 
 ## Known limitations (honest by design)
 

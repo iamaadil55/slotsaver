@@ -1,5 +1,39 @@
 # Implementation Notes — SlotSaver
 
+# Level 3 — Serving, monitoring, fairness (2026-07-09)
+
+## Goal
+Ship-grade layer: FastAPI + Docker serving, nightly batch job with drift-based
+retrain trigger, per-group fairness audit, tie-aware ranking.
+
+## Key decisions
+- **Tie-aware ranking:** rank by (calibrated p, raw score), display calibrated p —
+  closes the 15-way isotonic tie found in Aadil's Level 2b run.
+- **Fairness framed as benefit, not harm:** high score triggers HELP, so the audit
+  measures benefit_rate (share of each group's actual no-shows that get the
+  strongest intervention) alongside per-group calibration gaps. Race/income are
+  absent from the data; scholarship + neighbourhood audited as proxies.
+- **PSI with 0.10/0.25 thresholds** (industry convention) + base-rate delta check —
+  base-rate drift breaks calibration even when features look stable.
+- **API trains at startup** from build_scoring_artifacts() — one source of truth;
+  artifact persistence deferred to Level 4 notes.
+- **Empty-input guard in daily_call_list** — LightGBM pred_contrib rejects empty
+  frames (found via the API's 404 path test).
+
+## Open questions
+- Sandbox-only issue during dev: host→VM file sync lagged, serving truncated
+  files and stale __pycache__; worked around via /tmp copies + PYTHONPYCACHEPREFIX.
+  No impact on the repo itself.
+
+## Verification
+- `python smoke_test_l3.py` (synthetic): tie-order assert, fairness tables
+  (groups complete, benefit_rate∈[0,1]), PSI stable-vs-shifted (alert fires at
+  +14d lead-time shift), API via TestClient (/health, /score bounds+tier+why,
+  /call-list capacity cap, 404 on empty day) — ALL PASSED.
+- nightly_job.py exercised implicitly through the same pipeline + monitor calls.
+
+---
+
 # Level 2b — Explanations + call-list dashboard (2026-07-06)
 
 ## Goal
