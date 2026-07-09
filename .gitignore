@@ -1,0 +1,16 @@
+# Data — never commit the Kaggle CSV (size + licensing); the folder stays via .gitkeep
+data/*
+!data/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
