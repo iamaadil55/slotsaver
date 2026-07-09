@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SlotSaver — cut clinic no-shows with calibrated AI</title>
+<meta name="description" content="SlotSaver turns your appointment history into tomorrow's 20 most important phone calls. Calibrated risk, plain-language reasons, fairness-audited.">
+<style>
+  :root { --ink:#0f2a3d; --teal:#0e7c7b; --teal-d:#0a5c5b; --bg:#f7fafc; --card:#ffffff; --mut:#5a7184; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; color:var(--ink); background:var(--bg); line-height:1.6; }
+  .wrap { max-width: 960px; margin:0 auto; padding:0 24px; }
+  header { padding:72px 0 56px; text-align:center; background:linear-gradient(180deg,#eef6f6 0%, var(--bg) 100%); }
+  .badge { display:inline-block; font-size:13px; color:var(--teal-d); background:#e0f0ef; border:1px solid #c4e2e0; padding:4px 12px; border-radius:999px; margin-bottom:20px; }
+  h1 { font-size:42px; line-height:1.15; letter-spacing:-0.5px; }
+  h1 span { color:var(--teal); }
+  .sub { font-size:19px; color:var(--mut); max-width:640px; margin:18px auto 32px; }
+  .cta { display:inline-block; background:var(--teal); color:#fff; text-decoration:none; font-weight:600; padding:14px 28px; border-radius:10px; margin:0 6px; }
+  .cta.ghost { background:transparent; color:var(--teal-d); border:2px solid var(--teal); }
+  .cta:hover { background:var(--teal-d); }
+  .cta.ghost:hover { background:#e0f0ef; }
+  section { padding:56px 0; }
+  h2 { font-size:28px; margin-bottom:8px; }
+  .lead { color:var(--mut); margin-bottom:32px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:20px; }
+  .card { background:var(--card); border:1px solid #e3ebf1; border-radius:14px; padding:26px; }
+  .card h3 { font-size:17px; margin-bottom:8px; color:var(--teal-d); }
+  .card p { font-size:15px; color:var(--mut); }
+  .stat { font-size:34px; font-weight:700; color:var(--teal); }
+  .stat-label { font-size:14px; color:var(--mut); }
+  .steps { counter-reset: step; }
+  .step { display:flex; gap:18px; margin-bottom:22px; align-items:flex-start; }
+  .step::before { counter-increment:step; content:counter(step); flex:0 0 36px; height:36px; background:var(--teal); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; }
+  .honesty { background:#fff8e6; border:1px solid #f0e0b0; border-radius:14px; padding:22px 26px; font-size:15px; color:#6b5d33; }
+  footer { padding:40px 0 56px; text-align:center; color:var(--mut); font-size:14px; border-top:1px solid #e3ebf1; margin-top:40px; }
+  footer a { color:var(--teal-d); }
+  @media (max-width:600px){ h1{font-size:32px;} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="badge">Research prototype · open source</div>
+    <h1>Every empty chair was a <span>predictable</span> phone call.</h1>
+    <p class="sub">SlotSaver learns from your clinic's own appointment history and hands your
+    front desk tomorrow's 20 most important calls — each with an honest probability and a
+    plain-language reason.</p>
+    <a class="cta" href="https://github.com/iamaadil55/slotsaver" >View the project</a>
+    <a class="cta ghost" href="https://github.com/iamaadil55/slotsaver#run-the-dashboard-level-2b">Run the demo</a>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2>The problem, in numbers</h2>
+    <p class="lead">Measured on 110,516 real medical appointments (public research dataset).</p>
+    <div class="grid">
+      <div class="card"><div class="stat">20%</div><div class="stat-label">of appointments were no-shows — one in five slots wasted</div></div>
+      <div class="card"><div class="stat">3×</div><div class="stat-label">more no-shows caught per call vs untargeted calling (62% vs 20% hit rate)</div></div>
+      <div class="card"><div class="stat">~$200</div><div class="stat-label">industry estimate of revenue lost per missed appointment</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>What makes it trustworthy</h2>
+    <p class="lead">Built the way medical decision-support should be built.</p>
+    <div class="grid">
+      <div class="card"><h3>Honest probabilities</h3><p>Isotonic-calibrated: when SlotSaver says 40%, about 40% actually miss. Calibration error measured at 0.015 on held-out future weeks.</p></div>
+      <div class="card"><h3>Reasons, not black boxes</h3><p>Every flag explains itself — "booked 32 days ahead · 2 prior no-shows" — so staff can trust and verify each call.</p></div>
+      <div class="card"><h3>Fairness-audited</h3><p>Per-group calibration and benefit rates are checked on every retrain. Risk scores trigger <em>help</em> — reminders, rescheduling, transport info — never denial of care.</p></div>
+      <div class="card"><h3>Drift-monitored</h3><p>Booking patterns change. SlotSaver watches its own inputs (PSI) and flags itself for retraining before quality decays.</p></div>
+      <div class="card"><h3>Capacity-aware</h3><p>Your staff can make 20 calls a day, not 500. SlotSaver ranks per patient — not per appointment — and respects real economics.</p></div>
+      <div class="card"><h3>Runs on your data</h3><p>No EHR integration required to start: an appointment spreadsheet is enough to train a clinic-specific model.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>How a pilot works</h2>
+    <div class="steps" style="margin-top:24px">
+      <div class="step"><div><strong>Share appointment history.</strong> An Excel/CSV export of past appointments (no names needed — dates, demographics, attendance).</div></div>
+      <div class="step"><div><strong>SlotSaver trains and validates on your clinic.</strong> Time-based testing only: trained on your past, judged on your recent weeks.</div></div>
+      <div class="step"><div><strong>Front desk gets a daily call list.</strong> Ranked, capped to your capacity, with reasons — via dashboard today, inside your workflow tomorrow.</div></div>
+      <div class="step"><div><strong>We measure honestly.</strong> No-show rate before vs after, reported with the same rigor as the model itself.</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="honesty">
+      <strong>Where this project honestly stands:</strong> SlotSaver is a working research
+      prototype — model, calibration, explanations, API, monitoring, and fairness auditing are
+      built and tested on public data (all code and results are open). It has not yet run a
+      clinical pilot, and no causal claim is made about intervention effect until a randomized
+      pilot measures it. If you run a clinic and want to be the first pilot, that's exactly the
+      conversation we're looking for.
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Built by <strong>Aadil Shaikh</strong> ·
+    <a href="https://github.com/iamaadil55/slotsaver">GitHub</a> ·
+    <a href="mailto:shaikhaadil0406@gmail.com">shaikhaadil0406@gmail.com</a><br>
+    Prototype trained on the public Kaggle "Medical Appointment No Shows" dataset. Not medical software; not medical advice.
+  </div>
+</footer>
+
+</body>
+</html>
