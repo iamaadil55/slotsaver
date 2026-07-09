@@ -1,5 +1,31 @@
 # Implementation Notes — SlotSaver
 
+# Level 4 — Production design document + CI (2026-07-09)
+
+## Goal
+The "how this becomes real" layer, on paper: LEVEL4_PRODUCTION_DESIGN.md
+(architecture, FHIR R4 mapping, HIPAA-shaped safeguards, randomized trial with
+power sketch, feedback-loop mitigations, MLOps lifecycle, fairness-as-policy,
+cost/scaling). Plus one real artifact: GitHub Actions CI running all four
+smoke-test suites on every push.
+
+## Key decisions
+- **CI is real, not designed** — a green badge is stronger portfolio signal than
+  a paragraph about CI; the workflow needs only requirements-api.txt + httpx.
+- **Patient-level randomization** in the trial design (appointment-level
+  contaminates); stepped-wedge documented for small clinics.
+- **Never-intervene holdout slice** as the day-one answer to label contamination.
+- **Fairness table as a release gate**, and per-group thresholds framed as an
+  explicit, documented policy option — not a silent tweak.
+- HIPAA section explicitly labeled "engineer's map, not legal advice."
+
+## Verification
+- ci.yml parsed and confirmed wiring all 4 smoke tests (7 steps).
+- Design doc has no code to test; every quantitative claim (power calc ≈2,600/arm)
+  labeled as approximation.
+
+---
+
 # Level 3 — Serving, monitoring, fairness (2026-07-09)
 
 ## Goal

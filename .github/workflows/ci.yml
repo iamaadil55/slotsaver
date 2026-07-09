@@ -1,0 +1,33 @@
+name: smoke-tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install runtime dependencies
+        run: |
+          pip install -r requirements-api.txt httpx
+
+      - name: Level 1 — leakage guards, temporal split, models
+        run: python smoke_test.py
+
+      - name: Level 2a — calibration
+        run: python smoke_test_l2.py
+
+      - name: Level 2b — call list + explanations
+        run: python smoke_test_l2b.py
+
+      - name: Level 3 — ranking, fairness, drift, API contract
+        run: python smoke_test_l3.py

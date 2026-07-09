@@ -1,4 +1,6 @@
-# SlotSaver — Patient No-Show Prediction (Level 1 MVP)
+# SlotSaver — Patient No-Show Prediction
+
+![smoke-tests](https://github.com/iamaadil55/slotsaver/actions/workflows/ci.yml/badge.svg)
 
 Predict which medical appointments are likely to be missed, so clinic staff can target
 reminders, calls, and waitlist backfill at the right patients — instead of reminding everyone.
@@ -124,11 +126,12 @@ published *prospective* study reported — honest numbers, not leaderboard numbe
 
 ## Roadmap
 
-Levels 1–3 are complete: model → calibration → explanations → dashboard →
-API + Docker, nightly scoring, PSI drift monitoring, fairness audit, tie-aware
-ranking. **Level 4** is a production design exercise (FHIR/EHR integration,
-A/B test plan for true intervention effect, HIPAA architecture, MLflow + CI) —
-documented on paper rather than built, since it requires a real clinic.
+All four levels are complete: model → calibration → explanations → dashboard →
+API + Docker + nightly scoring + drift monitoring + fairness audit → production
+design. **[`LEVEL4_PRODUCTION_DESIGN.md`](LEVEL4_PRODUCTION_DESIGN.md)** covers
+FHIR/EHR integration, HIPAA-shaped data handling, the randomized trial that
+would prove causal impact, feedback-loop handling, and the MLOps lifecycle.
+CI runs all four smoke-test suites on every push (badge above).
 
 ## Known limitations (honest by design)
 
